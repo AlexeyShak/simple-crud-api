@@ -3,7 +3,11 @@ const path = require('path');
 
 module.exports =  {
     target: 'node',
-    entry: './index.js',
+    watchOptions: {
+        poll: true,
+        ignored: /node_modules/
+      },
+    entry: './app/index.js',
     plugins: [
         new Dotenv(),
     ],   
