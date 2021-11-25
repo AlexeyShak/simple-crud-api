@@ -2,6 +2,7 @@ const http = require('http');
 const {v4: uuidv4} = require('uuid');
 
 const { REQUEST_METHODS, STATUS_CODES, personID, personModel} = require('./constants/constants');
+const requestExtractor = require('./helpers/requestExtractor');
 const regExp = /\/persons\/(\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b)/;
 
 let data = [{
@@ -28,10 +29,41 @@ http.createServer(function(request, response){
         else response.end(JSON.stringify(result));
     }
     else if(request.method === REQUEST_METHODS.POST && request.url === '/persons'){
-        response.end('You can create new person');
+        requestExtractor(request)
+            .then(function responseData(postData){
+                let dataObj = JSON.parse(postData);
+                dataObj.id = uuidv4();
+                data.push(dataObj);
+                response.writeHead(STATUS_CODES.CREATED);
+                response.end(JSON.stringify(dataObj));       
+            });
+
     }
     else if(request.method === REQUEST_METHODS.PUT && regExp.test(request.url)){
-        response.end('Modify existing person');
+        let urlElArr = request.url.split('/');
+        let requestId = (el) => {
+            return el.id === urlElArr[2];
+        }
+        let result = data.findIndex(requestId);
+        if(result == -1){
+            response.end('No element found!');
+        }
+        else{
+            requestExtractor(request)
+                .then((putData) => {
+                    let putDataObj = JSON.parse(putData);
+                    if(putDataObj.name !== undefined){
+                        data[result].name = putDataObj.name
+                    }
+                    if(putDataObj.age !== undefined){
+                        data[result].age = putDataObj.age
+                    }
+                    if(putDataObj.hobbies !== undefined){
+                        data[result].hobbies = putDataObj.hobbies
+                    }
+                    response.end(JSON.stringify(data[result]));
+                })
+        }
     }
     else if(request.method === REQUEST_METHODS.DELETE && regExp.test(request.url)){
         let urlElArr = request.url.split('/');

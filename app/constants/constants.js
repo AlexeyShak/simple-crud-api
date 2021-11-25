@@ -8,6 +8,7 @@ const REQUEST_METHODS = {
 };
 const STATUS_CODES = {
     NOT_FOUND: 404,
-    OK: 200
+    OK: 200,
+    CREATED: 201
 };
 module.exports = {REQUEST_METHODS, STATUS_CODES};
