@@ -3,6 +3,7 @@ const {v4: uuidv4} = require('uuid');
 
 const { REQUEST_METHODS, STATUS_CODES, personID, personModel} = require('./constants/constants');
 const requestExtractor = require('./helpers/requestExtractor');
+const { postObjValidator, putObjValidator } = require('./validators/validators');
 const regExp = /\/persons\/(\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b)/;
 
 let data = [{
@@ -32,10 +33,16 @@ http.createServer(function(request, response){
         requestExtractor(request)
             .then(function responseData(postData){
                 let dataObj = JSON.parse(postData);
-                dataObj.id = uuidv4();
-                data.push(dataObj);
-                response.writeHead(STATUS_CODES.CREATED);
-                response.end(JSON.stringify(dataObj));       
+                const validationError = postObjValidator(dataObj)
+                if(validationError == undefined){
+                    dataObj.id = uuidv4();
+                    data.push(dataObj);
+                    response.writeHead(STATUS_CODES.CREATED);
+                    response.end(JSON.stringify(dataObj));
+                }
+                else{
+                    response.end(validationError);
+                };
             });
 
     }
@@ -52,16 +59,23 @@ http.createServer(function(request, response){
             requestExtractor(request)
                 .then((putData) => {
                     let putDataObj = JSON.parse(putData);
-                    if(putDataObj.name !== undefined){
-                        data[result].name = putDataObj.name
+                    const validationError = putObjValidator(putDataObj)
+                    if(validationError == undefined){
+                        if(putDataObj.name !== undefined){
+                            data[result].name = putDataObj.name
+                        }
+                        if(putDataObj.age !== undefined){
+                            data[result].age = putDataObj.age
+                        }
+                        if(putDataObj.hobbies !== undefined){
+                            data[result].hobbies = putDataObj.hobbies
+                        }
+                        response.end(JSON.stringify(data[result]));   
                     }
-                    if(putDataObj.age !== undefined){
-                        data[result].age = putDataObj.age
+                    else{
+                        response.end(validationError);
                     }
-                    if(putDataObj.hobbies !== undefined){
-                        data[result].hobbies = putDataObj.hobbies
-                    }
-                    response.end(JSON.stringify(data[result]));
+
                 })
         }
     }
