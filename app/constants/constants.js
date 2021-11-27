@@ -1,5 +1,3 @@
-const {v4: uuidv4} = require('uuid');
-
 const REQUEST_METHODS = {
     GET: 'GET',
     POST: 'POST',
@@ -9,6 +7,9 @@ const REQUEST_METHODS = {
 const STATUS_CODES = {
     NOT_FOUND: 404,
     OK: 200,
-    CREATED: 201
+    CREATED: 201,
+    SERVER_ERROR: 500,
+    NO_CONTENT: 204,
+    BAD_REQUEST: 400
 };
 module.exports = {REQUEST_METHODS, STATUS_CODES};
