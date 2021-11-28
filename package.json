@@ -16,10 +16,10 @@
    
   },
   "scripts": {
-    "start": "npm-run-all --parallel server build",
+    "start:dev": "npm-run-all --parallel server build",
     "build": "webpack --watch",
-    "build:prod": "webpack",
-    "server:prod": "NODE_ENV=production node ./dist/index.js",
+    "start:prod": "webpack",
+    "server:prod": "NODE_ENV=production nodemon ./dist/index.js",
     "server": "nodemon ./dist/index.js --watch ./dist"
   }
 }

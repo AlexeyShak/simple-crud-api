@@ -1,3 +1,5 @@
+const { ERRORS } = require("../constants/errors");
+
 postObjValidator = (obj) => {
     if(typeof obj !== 'object'){
         return 'Requested data is not an object';
@@ -33,25 +35,17 @@ postObjValidator = (obj) => {
 
 putObjValidator = (obj) => {
     if(typeof obj !== 'object'){
-        return 'Requested data is not an object';
+        return ERRORS.NOT_AN_OBJECT;
     }
-    else{
-        if(obj.hasOwnProperty('name')){
-            if(typeof obj.name !== 'string'){
-                return 'Name is not a string'
-            };
-        };
-        if(obj.hasOwnProperty('age')){
-            if(typeof obj.age !== 'number'){
-                return 'Age is not a number'
-            };
-        };
-        if(obj.hasOwnProperty('hobbies')){
-            if(!Array.isArray(obj.hobbies)){
-                return 'Name is not a string'
-            };
-        };
-
+    if(obj.hasOwnProperty('name') && typeof obj.name !== 'string'){
+        return ERRORS.NAME_NOT_A_STRING;
     };
+    if(obj.hasOwnProperty('age') && typeof obj.age !== 'number'){
+        return 'Age is not a number';
+    };
+    if(obj.hasOwnProperty('hobbies') && !Array.isArray(obj.hobbies)){
+        return 'Name is not a string';
+    };
+
 };
 module.exports = {postObjValidator, putObjValidator};
