@@ -1,9 +1,11 @@
+const { error } = require('console');
 const http = require('http');
 const {v4: uuidv4} = require('uuid');
 
 const { REQUEST_METHODS, STATUS_CODES} = require('./constants/constants');
+const { ERRORS } = require('./constants/errors');
 const requestExtractor = require('./helpers/requestExtractor');
-const { sendResponse } = require('./helpers/response');
+const { sendResponseEnd } = require('./helpers/response');
 const { postObjValidator, putObjValidator } = require('./validators/validators');
 
 const uuidValidator = /(\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b)/;
@@ -19,21 +21,21 @@ let data = [{
 http.createServer(function(request, response){
   
     if(request.method === REQUEST_METHODS.GET && request.url === '/person' ){
-        sendResponse(response, STATUS_CODES.OK, data);
+        sendResponseEnd(response, STATUS_CODES.OK, data);
     }
     else if(request.method === REQUEST_METHODS.GET && urlValidator.test(request.url)){
         let personId = request.url.split('/')[2];
         if(!uuidValidator.test(personId)){
             response.writeHead(STATUS_CODES.BAD_REQUEST);
-            return response.end('User ID format is not valid');
+            return response.end(ERRORS.WRONG_ID_FORMAT);
+            
         };
     
         const result = data.find(el => el.id === personId);
         if(result === undefined){
-            response.writeHead(STATUS_CODES.NOT_FOUND);
-            response.end('Element does not exist')
+            sendResponseEnd(response, STATUS_CODES.NOT_FOUND, ERRORS.PERSON_NOT_FOUND)
         }
-        else response.end(JSON.stringify(result));
+        else sendResponseEnd(response, STATUS_CODES.OK, result);
     }
     else if(request.method === REQUEST_METHODS.POST && request.url === '/person'){
         requestExtractor(request)
@@ -44,34 +46,29 @@ http.createServer(function(request, response){
                 }
                 catch (err){
                     response.writeHead(STATUS_CODES.SERVER_ERROR);
-                    return response.end('JSON parse error');
+                    return response.end(ERRORS.JSON_PARSE_ERR);
                 };
                 const validationError = postObjValidator(dataObj)
                 if(validationError === undefined){
                     dataObj.id = uuidv4();
                     data.push(dataObj);
-                    response.writeHead(STATUS_CODES.CREATED);
-                    response.end(JSON.stringify(dataObj));
+                    sendResponseEnd(response, STATUS_CODES.CREATED, dataObj)
                 }
                 else{
-                    response.end(validationError);
+                    sendResponseEnd(response, STATUS_CODES.OK, validationError);
                 };
             });
 
     }
     else if(request.method === REQUEST_METHODS.PUT && urlValidator.test(request.url)){
-        let urlElArr = request.url.split('/');
-        if(!uuidValidator.test(urlElArr[2])){
+        let personId = request.url.split('/')[2];
+        if(!uuidValidator.test(personId)){
             response.writeHead(STATUS_CODES.BAD_REQUEST);
-            return response.end('User ID format is not valid');
+            return response.end(ERRORS.WRONG_ID_FORMAT);
         };
-        let requestId = (el) => {
-            return el.id === urlElArr[2];
-        }
-        let result = data.findIndex(requestId);
+        let result = data.findIndex(el => el.id === personId);
         if(result == -1){
-            response.writeHead(STATUS_CODES.NOT_FOUND);
-            response.end('No element found!');
+            sendResponseEnd(response, STATUS_CODES.NOT_FOUND, ERRORS.PERSON_NOT_FOUND);
         }
         else{
             requestExtractor(request)
@@ -82,7 +79,7 @@ http.createServer(function(request, response){
                 }
                 catch (err){ 
                     response.writeHead(STATUS_CODES.SERVER_ERROR);
-                    return response.end('JSON parse error');
+                    return response.end(ERRORS.JSON_PARSE_ERR);
                 }
                 const validationError = putObjValidator(putDataObj)
                 if(validationError == undefined){
@@ -96,10 +93,10 @@ http.createServer(function(request, response){
                     if(putDataObj.hobbies !== undefined){
                         data[result].hobbies = putDataObj.hobbies;
                     }
-                    response.end(JSON.stringify(data[result]));   
+                    sendResponseEnd(response, STATUS_CODES.OK, data[result]) 
                 }
                 else{
-                    response.end(validationError);
+                    sendResponseEnd(response, STATUS_CODES.OK, validationError);
                 }
 
             })
@@ -109,25 +106,22 @@ http.createServer(function(request, response){
         let urlElArr = request.url.split('/');
         if(!uuidValidator.test(urlElArr[2])){
             response.writeHead(STATUS_CODES.BAD_REQUEST);
-            return response.end('User ID format is not valid');
+            return response.end(ERRORS.WRONG_ID_FORMAT);
         };
         function elementValidator(element){
             return element.id !== urlElArr[2];
         };
         let result = data.filter(elementValidator);
         if(result.length === data.length){
-            response.writeHead(STATUS_CODES.NOT_FOUND);
-            response.end('Element not found');
+            sendResponseEnd(response, STATUS_CODES.NOT_FOUND, ERRORS.PERSON_NOT_FOUND)
         }
         else{
             data = result;
-            response.writeHead(STATUS_CODES.NO_CONTENT);
-            response.end();
+            sendResponseEnd(response, STATUS_CODES.NO_CONTENT)
         } 
     }
     else{
-        response.writeHead(STATUS_CODES.NOT_FOUND);
-        response.end('Endpoint not found!');
+        sendResponseEnd(response, STATUS_CODES.NOT_FOUND, ERRORS.ENDPOINT_NOT_FOUND)
     };
 }).listen(process.env.PORT);
 

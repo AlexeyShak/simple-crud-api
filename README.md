@@ -14,7 +14,8 @@ This app contains CRUD API using in-memory database underneath, to perform the f
 # How to use
 
 ## Prerequiremenst 
- Pull repository, run ```npm i ```, create .env file this PORT variable. 
+ Pull repository, run ```npm i ```, create .env file this PORT variable (e.g. PORT=3333)
+  
 1. Run the comand `npm run start:dev` in your terminal.
 2. To checkup your requests on server recomended to use API Platform(Postman, RESTClient, etc.) If you  dont want to install separate API Platform you can install browser extension.
 (for Chrome you can get it here https://chrome.google.com/webstore/detail/advanced-rest-client/hgmloofddffdnphfgcellkdfbfbjeloo ).

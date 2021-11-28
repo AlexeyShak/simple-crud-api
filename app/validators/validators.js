@@ -2,32 +2,26 @@ const { ERRORS } = require("../constants/errors");
 
 postObjValidator = (obj) => {
     if(typeof obj !== 'object'){
-        return 'Requested data is not an object';
+        return ERRORS.NOT_AN_OBJECT;
     }
     else{
         if(!obj.hasOwnProperty('name')){
-            return 'No name entered';
+            return ERRORS.NAME_NOT_ENTERED;
         }
-        else{
-            if(typeof obj.name !== 'string'){
-                return 'Name is not a string';
-            }
+        if(typeof obj.name !== 'string'){
+            return ERRORS.NAME_NOT_A_STRING;
         };
         if(!obj.hasOwnProperty('age')){
-            return 'No age entered';
+            return ERRORS.AGE_NOT_ENTERED;
         }
-        else{
-            if(typeof obj.age !== 'number'){
-                return 'Age is not a number'
-            }
+        if(typeof obj.age !== 'number'){
+            return ERRORS.AGE_NOT_NUMBER;
         };
         if(!obj.hasOwnProperty('hobbies')){
-            return 'No hobbies entered';
+            return ERRORS.HOBBIES_NOT_ENTERED;
         }
-        else{
-            if(!Array.isArray(obj.hobbies)){
-                return 'Hobbies is not an array';
-            }
+        if(!Array.isArray(obj.hobbies)){
+            return ERRORS.HOBBIES_NOT_ARRAY;
         };
     };  
 };
@@ -41,10 +35,10 @@ putObjValidator = (obj) => {
         return ERRORS.NAME_NOT_A_STRING;
     };
     if(obj.hasOwnProperty('age') && typeof obj.age !== 'number'){
-        return 'Age is not a number';
+        return  ERRORS.AGE_NOT_NUMBER;
     };
     if(obj.hasOwnProperty('hobbies') && !Array.isArray(obj.hobbies)){
-        return 'Name is not a string';
+        return ERRORS.HOBBIES_NOT_ARRAY;
     };
 
 };
