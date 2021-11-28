@@ -1,6 +1,8 @@
 const Dotenv = require('dotenv-webpack');
 const path = require('path');
 
+const envTrimmed =  process.env.NODE_ENV ? process.env.NODE_ENV.trim() : null;
+
 module.exports =  {
     target: 'node',
     watchOptions: {
@@ -19,6 +21,5 @@ module.exports =  {
         modules: ['node_modules'],
         extensions: ['*', '.js', '.json']
     },
-    mode: process.env.NODE_ENV === 'production' ? 'production' : 'development'
-
+    mode: envTrimmed || 'development'
 };

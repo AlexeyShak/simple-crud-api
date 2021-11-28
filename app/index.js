@@ -16,7 +16,6 @@ let data = [{
     hobbies: ['random hobbie']
 }];
 
-
 http.createServer(function(request, response){
   
     if(request.method === REQUEST_METHODS.GET && request.url === '/person' ){
