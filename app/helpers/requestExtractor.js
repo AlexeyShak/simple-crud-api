@@ -1,4 +1,4 @@
-module.exports = requestDataExtractor = (req) => {
+const requestDataExtractor = (req) => {
     return new Promise((resolve, reject) => {
         let body = '';
         req.on('data', (chunk) => {
@@ -10,3 +10,4 @@ module.exports = requestDataExtractor = (req) => {
 
     });
 }
+module.exports = {requestDataExtractor}

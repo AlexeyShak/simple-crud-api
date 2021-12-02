@@ -9,7 +9,7 @@ module.exports =  {
         poll: true,
         ignored: /node_modules/
       },
-    entry: './app/index.js',
+    entry: './app/indexNew.js',
     plugins: [
         new Dotenv(),
     ],   
