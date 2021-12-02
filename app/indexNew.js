@@ -1,9 +1,4 @@
-const { error } = require('console');
 const http = require('http');
-
-const { REQUEST_METHODS, STATUS_CODES} = require('./constants/constants');
-const { ERRORS } = require('./constants/errors');
-const requestExtractor = require('./helpers/requestExtractor');
 
 const {usersController} = require('./controllers/userController')
 const {boardsController} = require('./controllers/boardsController')

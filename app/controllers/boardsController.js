@@ -4,7 +4,7 @@ const { REQUEST_METHODS, STATUS_CODES} = require('../constants/constants');
 const { ERRORS } = require('../constants/errors');
 
 const {sendResponseEnd} = require('../helpers/response');
-const {getByID} = require('../services/boardService')
+const {getByID                                          } = require('../services/boardService')
 const {boards} = require('../repositry/boards');
 
 const {requestDataExtractor} = require('../helpers/requestExtractor');
